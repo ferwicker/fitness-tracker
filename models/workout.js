@@ -7,7 +7,7 @@ const WorkoutSchema = new Schema({
       type: Date, 
       default: Date.now 
     },
-    duration: {
+    totalDuration: {
         type: Number,
         default: 0
     }
