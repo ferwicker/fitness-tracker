@@ -8,6 +8,9 @@ app.get("/api/workouts", (req, res) => {
             $addFields: {
                 totalDuration: { $sum: "$exercises.duration" }
             }
+        },
+        {
+            $sort: { day: -1 }
         }
     ])
         .then(dbWorkout => {
@@ -24,21 +27,22 @@ app.get(`/api/workouts/range`, (req, res) => {
             $addFields: {
             totalDuration: { $sum: "$exercises.duration" }
             }
+        },
+        {
+            $sort: { day: -1 } //added this to sort
         }
     ])
         .limit(7)
         .then(dbWorkout => {
             res.json(dbWorkout);
-            console.log(dbWorkout);
         })
         .catch(err => {
             res.json(err)
         })
 });
 
-app.post("/api/workouts", (data, res) => {
-    console.log(data);
-    db.Workout.create(data)
+app.post("/api/workouts", (data, res) => { 
+    db.Workout.create(data) // changed req.body to data
       .then(dbWorkout => {
         res.json(dbWorkout);
       })
@@ -48,11 +52,12 @@ app.post("/api/workouts", (data, res) => {
   });
 
   app.put("/api/workouts/:id", (req, res) => {
-    const id = req.params.id;
-    db.Workout.findOneAndUpdate({id}, {$push: {exercises: req.body}}, {new: true})
+    
+    db.Workout.findOneAndUpdate({_id: req.params.id}, {$push: {exercises: req.body}}, {new: true})
 
       .then(dbWorkout => {
         res.json(dbWorkout);
+        //console.log(dbWorkout);
       })
       .catch(err => {
         res.json(err);
